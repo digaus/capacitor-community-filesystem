@@ -4,7 +4,8 @@
 
 Where you want to use the `Filesystem` add this:
 
-`import {  Filesystem as MainFilesystem, FilesystemPlugin } from '@capacitor/filesystem';
+```typescript
+import {  Filesystem as MainFilesystem, FilesystemPlugin } from '@capacitor/filesystem';
 
 import { Filesystem as ElectronFilesystem } from '@capacitor-community/filesystem';
 
@@ -19,7 +20,7 @@ let Filesystem: FilesystemPlugin = MainFilesystem;
             Filesystem = ElectronFilesystem;
         }
     }
-`
+```
 
 ## API
 
