@@ -1,6 +1,6 @@
 ## Usage
 
-`npm install `
+`npm install https://github.com/digaus/capacitor-community-filesystem`
 
 Where you want to use the `Filesystem` add this:
 
