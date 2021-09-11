@@ -1,3 +1,26 @@
+## Usage
+
+`npm install `
+
+Where you want to use the `Filesystem` add this:
+
+`import {  Filesystem as MainFilesystem, FilesystemPlugin } from '@capacitor/filesystem';
+
+import { Filesystem as ElectronFilesystem } from '@capacitor-community/filesystem';
+
+let Filesystem: FilesystemPlugin = MainFilesystem;
+
+[...]
+
+    constructor(
+        private platform: Platform,
+    ) {
+        if (this.platform.is('electron')) {
+            Filesystem = ElectronFilesystem;
+        }
+    }
+`
+
 ## API
 
 <docgen-index>
