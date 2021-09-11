@@ -1,6 +1,7 @@
 import { registerPlugin } from '@capacitor/core';
-const Filesystem = registerPlugin('FileServer', {
-    web: () => import('./web').then(m => new m.FilesystemWeb()),
+const Filesystem = registerPlugin('Filesystem', {
+    electron: () => window.CapacitorCustomPlatform.plugins.Filesystem,
 });
+export * from './definitions';
 export { Filesystem };
 //# sourceMappingURL=index.js.map

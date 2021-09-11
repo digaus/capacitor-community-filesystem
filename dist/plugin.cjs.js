@@ -4,16 +4,8 @@ Object.defineProperty(exports, '__esModule', { value: true });
 
 var core = require('@capacitor/core');
 
-const Filesystem = core.registerPlugin('FileServer', {
-    web: () => Promise.resolve().then(function () { return web; }).then(m => new m.FilesystemWeb()),
-});
-
-class FilesystemWeb extends core.WebPlugin {
-}
-
-var web = /*#__PURE__*/Object.freeze({
-    __proto__: null,
-    FilesystemWeb: FilesystemWeb
+const Filesystem = core.registerPlugin('Filesystem', {
+    electron: () => window.CapacitorCustomPlatform.plugins.Filesystem,
 });
 
 exports.Filesystem = Filesystem;

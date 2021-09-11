@@ -1,53 +1,41 @@
 'use strict';
 
-var require$$0$1 = require('tslib');
-var require$$0 = require('@capacitor/filesystem');
-var require$$1 = require('path');
-var require$$2 = require('os');
-var require$$3 = require('fs');
+Object.defineProperty(exports, '__esModule', { value: true });
+
+var require$$0 = require('fs');
+var require$$1 = require('os');
+var require$$2 = require('path');
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
-var require$$0__default$1 = /*#__PURE__*/_interopDefaultLegacy(require$$0$1);
 var require$$0__default = /*#__PURE__*/_interopDefaultLegacy(require$$0);
 var require$$1__default = /*#__PURE__*/_interopDefaultLegacy(require$$1);
 var require$$2__default = /*#__PURE__*/_interopDefaultLegacy(require$$2);
-var require$$3__default = /*#__PURE__*/_interopDefaultLegacy(require$$3);
-
-function getDefaultExportFromCjs (x) {
-	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
-}
 
 var src = {};
 
-var plugin = {};
-
-Object.defineProperty(plugin, "__esModule", { value: true });
-const filesystem_1 = require$$0__default['default'];
+Object.defineProperty(src, "__esModule", { value: true });
+const fs_1 = require$$0__default['default'];
+const os_1 = require$$1__default['default'];
+const path_1 = require$$2__default['default'];
 class Filesystem {
     constructor() {
-        this.NodeFS = null;
         this.fileLocations = null;
-        this.Path = null;
         this.fileLocations = { DRIVE_ROOT: '', DOCUMENTS: '' };
-        let path = require$$1__default['default'];
-        let os = require$$2__default['default'];
-        if (os.platform == "win32") {
-            this.fileLocations["DRIVE_ROOT"] = process.cwd().split(path.sep)[0];
+        if (os_1.platform() == "win32") {
+            this.fileLocations["DRIVE_ROOT"] = process.cwd().split(path_1.sep)[0];
         }
         else {
             this.fileLocations["DRIVE_ROOT"] = '/';
         }
-        this.fileLocations[filesystem_1.Directory.Documents] = path.join(os.homedir(), `Documents`) + path.sep;
-        this.NodeFS = require$$3__default['default'];
-        this.Path = path;
+        this.fileLocations['DOCUMENTS'] = path_1.join(os_1.homedir(), `Documents`) + path_1.sep;
     }
     readFile(options) {
         return new Promise((resolve, reject) => {
             if (Object.keys(this.fileLocations).indexOf(options.directory) === -1)
                 reject(`${options.directory} is currently not supported in the Electron implementation.`);
             let lookupPath = this.fileLocations[options.directory] + options.path;
-            this.NodeFS.readFile(lookupPath, options.encoding || 'binary', (err, data) => {
+            fs_1.readFile(lookupPath, options.encoding || 'binary', (err, data) => {
                 if (err) {
                     reject(err);
                     return;
@@ -66,15 +54,15 @@ class Filesystem {
                 const base64Data = options.data.indexOf(',') >= 0 ? options.data.split(',')[1] : options.data;
                 data = Buffer.from(base64Data, 'base64');
             }
-            const dstDirectory = this.Path.dirname(lookupPath);
-            this.NodeFS.stat(dstDirectory, (err) => {
+            const dstDirectory = path_1.dirname(lookupPath);
+            fs_1.stat(dstDirectory, (err) => {
                 if (err) {
                     const doRecursive = options.recursive;
                     if (doRecursive) {
-                        this.NodeFS.mkdirSync(dstDirectory, { recursive: doRecursive });
+                        fs_1.mkdirSync(dstDirectory, { recursive: doRecursive });
                     }
                 }
-                this.NodeFS.writeFile(lookupPath, data, options.encoding || 'binary', (err) => {
+                fs_1.writeFile(lookupPath, data, options.encoding || 'binary', (err) => {
                     if (err) {
                         reject(err);
                         return;
@@ -94,7 +82,7 @@ class Filesystem {
                 const base64Data = options.data.indexOf(',') >= 0 ? options.data.split(',')[1] : options.data;
                 data = Buffer.from(base64Data, 'base64');
             }
-            this.NodeFS.appendFile(lookupPath, data, options.encoding || 'binary', (err) => {
+            fs_1.appendFile(lookupPath, data, options.encoding || 'binary', (err) => {
                 if (err) {
                     reject(err);
                     return;
@@ -108,7 +96,7 @@ class Filesystem {
             if (Object.keys(this.fileLocations).indexOf(options.directory) === -1)
                 reject(`${options.directory} directory is currently not supported in the Electron implementation.`);
             let lookupPath = this.fileLocations[options.directory] + options.path;
-            this.NodeFS.unlink(lookupPath, (err) => {
+            fs_1.unlink(lookupPath, (err) => {
                 if (err) {
                     reject(err);
                     return;
@@ -123,7 +111,7 @@ class Filesystem {
                 reject(`${options.directory} is currently not supported in the Electron implementation.`);
             let lookupPath = this.fileLocations[options.directory] + options.path;
             const doRecursive = options.recursive;
-            this.NodeFS.mkdir(lookupPath, { recursive: doRecursive }, (err) => {
+            fs_1.mkdir(lookupPath, { recursive: doRecursive }, (err) => {
                 if (err) {
                     reject(err);
                     return;
@@ -147,7 +135,7 @@ class Filesystem {
                     if (!readDirResult.files.length) {
                         return new Promise((resolve, reject) => {
                             let lookupPath = this.fileLocations[directory] + path;
-                            this.NodeFS.rmdir(lookupPath, (err) => {
+                            fs_1.rmdir(lookupPath, (err) => {
                                 if (err) {
                                     reject(err);
                                     return;
@@ -158,7 +146,7 @@ class Filesystem {
                     }
                     else {
                         return Promise.all(readDirResult.files.map((f) => {
-                            return this.rmdir({ path: this.Path.join(path, f), directory, recursive });
+                            return this.rmdir({ path: path_1.join(path, f), directory, recursive });
                         }))
                             .then(() => {
                             return this.rmdir({ path, directory, recursive });
@@ -176,7 +164,7 @@ class Filesystem {
             if (Object.keys(this.fileLocations).indexOf(options.directory) === -1)
                 reject(`${options.directory} is currently not supported in the Electron implementation.`);
             let lookupPath = this.fileLocations[options.directory] + options.path;
-            this.NodeFS.readdir(lookupPath, (err, files) => {
+            fs_1.readdir(lookupPath, (err, files) => {
                 if (err) {
                     reject(err);
                     return;
@@ -199,7 +187,7 @@ class Filesystem {
             if (Object.keys(this.fileLocations).indexOf(options.directory) === -1)
                 reject(`${options.directory} is currently not supported in the Electron implementation.`);
             let lookupPath = this.fileLocations[options.directory] + options.path;
-            this.NodeFS.stat(lookupPath, (err, stats) => {
+            fs_1.stat(lookupPath, (err, stats) => {
                 if (err) {
                     reject(err);
                     return;
@@ -217,31 +205,31 @@ class Filesystem {
     _copy(options, doRename = false) {
         const copyRecursively = (src, dst) => {
             return new Promise((resolve, reject) => {
-                this.NodeFS.stat(src, (err, stats) => {
+                fs_1.stat(src, (err, stats) => {
                     if (err) {
                         reject(err);
                         return;
                     }
                     if (stats.isDirectory()) {
-                        this.NodeFS.mkdir(dst, (err) => {
+                        fs_1.mkdir(dst, (err) => {
                             if (err) {
                                 reject(err);
                                 return;
                             }
-                            const files = this.NodeFS.readdirSync(src);
-                            Promise.all(files.map((file) => copyRecursively(src + this.Path.sep + file, dst + this.Path.sep + file)))
+                            const files = fs_1.readdirSync(src);
+                            Promise.all(files.map((file) => copyRecursively(src + path_1.sep + file, dst + path_1.sep + file)))
                                 .then(() => resolve())
                                 .catch(reject);
                             return;
                         });
                         return;
                     }
-                    const dstParent = this.Path.dirname(dst).split(this.Path.sep).pop();
-                    this.NodeFS.stat(dstParent, (err) => {
+                    const dstParent = path_1.dirname(dst).split(path_1.sep).pop();
+                    fs_1.stat(dstParent, (err) => {
                         if (err) {
-                            this.NodeFS.mkdirSync(dstParent);
+                            fs_1.mkdirSync(dstParent);
                         }
-                        this.NodeFS.copyFile(src, dst, (err) => {
+                        fs_1.copyFile(src, dst, (err) => {
                             if (err) {
                                 reject(err);
                                 return;
@@ -271,7 +259,7 @@ class Filesystem {
             const fromPath = this.fileLocations[options.directory] + options.from;
             const toPath = this.fileLocations[options.toDirectory] + options.to;
             if (doRename) {
-                this.NodeFS.rename(fromPath, toPath, (err) => {
+                fs_1.rename(fromPath, toPath, (err) => {
                     if (err) {
                         reject(err);
                         return;
@@ -299,16 +287,8 @@ class Filesystem {
         return null;
     }
 }
-plugin.Filesystem = Filesystem;
+var Filesystem_1 = src.Filesystem = Filesystem;
 
-(function (exports) {
-Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require$$0__default$1['default'];
-tslib_1.__exportStar(plugin, exports);
-
-}(src));
-
-var index = /*@__PURE__*/getDefaultExportFromCjs(src);
-
-module.exports = index;
+exports.Filesystem = Filesystem_1;
+exports['default'] = src;
 //# sourceMappingURL=plugin.js.map
